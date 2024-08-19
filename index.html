@@ -375,9 +375,9 @@
         const inputValue = parseInt(inputCell.value);
 
         // หาเลขใน 3 ช่องเว้นท้าย
-        const remainingNumbers = Array.from(row.querySelectorAll('.number-cell')).slice(8, 11);
-        const remainingValues = remainingNumbers.map(cell => parseInt(cell.textContent));
+        const remainingNumbers = Array.from(row.querySelectorAll('.number-cell')).slice(7); // ปรับการเลือกให้ครอบคลุมทุกช่องเว้น
 
+        // ตรวจสอบเลขที่กรอกว่าตรงกับเลขสุ่มที่เลือกหรือไม่
         if (selectedNumbers.includes(inputValue)) {
             resultCell.textContent = '1';
             resultCell.className = 'result-cell correct';
@@ -390,7 +390,8 @@
 
         // ตรวจสอบว่าเลขที่กรอกตรงกับเลขในช่องเว้นหรือไม่ และเปลี่ยนเป็นสีแดงจาง ๆ
         remainingNumbers.forEach((cell, index) => {
-            if (remainingValues[index] === inputValue) {
+            const cellValue = parseInt(cell.textContent);
+            if (!isNaN(cellValue) && cellValue === inputValue) {
                 cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // สีแดงจาง ๆ
             } else {
                 cell.style.backgroundColor = ''; // ล้างสีพื้นหลังถ้าไม่ตรง
@@ -420,13 +421,6 @@
         newInputCell.focus();
     }
 });
-
-
-
-
-
-
-
 
 
 
