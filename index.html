@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Number Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .content {
+            width: 75%;
+            margin-right: 20px;
+        }
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 10px;
+            font-size: 16px;
+        }
+        th, td {
+            padding: 10px 20px;
+        }
+        th:first-child, td:first-child {
+            width: 50px;
+        }
+        th:last-child, td:last-child {
+            width: 70px;
+        }
+        th:nth-last-child(3), td:nth-last-child(3) {
+            width: 230px;
+        }
+        th:nth-last-child(2) {
+            width: 90px;
+        }
+        td:nth-last-child(2) {
+            text-align: center;
+        }
+        .input-cell {
+            width: 50px;
+            height: 45px;
+            text-align: center;
+            background-color: #fcf8e3;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .result-cell {
+            width: 150px;
+            height: 45px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .correct {
+            background-color: green;
+            color: white;
+        }
+        .incorrect {
+            background-color: red;
+            color: white;
+        }
+        #sidebar {
+            width: 20%;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        #sidebar h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #333;
+            text-align: center;
+        }
+        #sidebar p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        #sidebar .analysis-point {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        #sidebar .summary-container {
+            margin-top: 20px;
+        }
+        #sidebar .summary-container .summary-point {
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #e1e1e1;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+        #sidebar .summary-point.correct {
+            background-color: green;
+            color: white;
+        }
+        #sidebar .summary-point.incorrect {
+            background-color: red;
+            color: white;
+        }
+        #number-statistics-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        #sidebar #number-statistics {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            width: 45%;
+        }
+        #sidebar #number-statistics span {
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            color: #000;
+            text-align: center;
+        }
+        .button-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .button-container button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .button-container button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .spacer {
+            width: 20px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        <h2>Random Number Generator</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th colspan="7">สุ่มออก</th>
+                    <th class="spacer"></th>
+                    <th colspan="3">เว้น</th>
+                    <th class="spacer"></th>
+                    <th colspan="3">เลขจริง</th>
+                    <th>เลขออก</th>
+                    <th>ผล</th>
+                </tr>
+            </thead>
+            <tbody id="results">
+                <!-- ผลลัพธ์จะแสดงที่นี่ -->
+            </tbody>
+        </table>
+
+    </div>
+
+    <div id="sidebar">
+        <h3>การวิเคราะห์ตัวเลข</h3>
+        <div class="analysis-point">
+            <p>คำนวณค่าเฉลี่ยของตัวเลขที่สุ่มออกมาแล้วเทียบกับค่าเฉลี่ยที่คาดหวังตามหลักสถิติ</p>
+        </div>
+        <div class="summary-container">
+            <div class="summary-point correct">ถูกต้อง: 0 ครั้ง (0.00%)</div>
+            <div class="summary-point incorrect">ผิดพลาด: 0 ครั้ง (0.00%)</div>
+        </div>
+        <div id="number-statistics-container">
+            <div id="number-statistics">
+                <span>0: 0 ครั้ง</span>
+                <span>1: 0 ครั้ง</span>
+                <span>2: 0 ครั้ง</span>
+                <span>3: 0 ครั้ง</span>
+                <span>4: 0 ครั้ง</span>
+            </div>
+            <div id="number-statistics">
+                <span>5: 0 ครั้ง</span>
+                <span>6: 0 ครั้ง</span>
+                <span>7: 0 ครั้ง</span>
+                <span>8: 0 ครั้ง</span>
+                <span>9: 0 ครั้ง</span>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button onclick="generateNumbers()">Generate</button>
+            <button onclick="clearNumbers()">Clear</button>
+            <button onclick="saveResults()">Save</button>
+        </div>
+
+    </div>
+
+    <script>
+        let sequence = 1;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let numberStatistics = Array(10).fill(0);
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function updateSummary() {
+            const total = correctCount + incorrectCount;
+            const correctPercentage = total ? (correctCount / total * 100).toFixed(2) : 0;
+            const incorrectPercentage = total ? (incorrectCount / total * 100).toFixed(2) : 0;
+
+            document.querySelector('#sidebar .correct').textContent = `ถูกต้อง: ${correctCount} ครั้ง (${correctPercentage}%)`;
+            document.querySelector('#sidebar .incorrect').textContent = `ผิดพลาด: ${incorrectCount} ครั้ง (${incorrectPercentage}%)`;
+
+            const statsContainer1 = document.querySelectorAll('#number-statistics')[0];
+            const statsContainer2 = document.querySelectorAll('#number-statistics')[1];
+            statsContainer1.innerHTML = '';
+            statsContainer2.innerHTML = '';
+            numberStatistics.forEach((count, num) => {
+                const stat = document.createElement('span');
+                stat.textContent = `${num}: ${count} ครั้ง`;
+                if (num < 5) {
+                    statsContainer1.appendChild(stat);
+                } else {
+                    statsContainer2.appendChild(stat);
+                }
+            });
+        }
+
+        function generateNumbers() {
+    // สร้างอาเรย์ของตัวเลข 0-9
+    let numbers = [];
+    for (let i = 0; i < 10; i++) {
+        numbers.push(i);
+    }
+
+    // สับเปลี่ยนอาเรย์ด้วย Fisher-Yates Shuffle
+    shuffleArray(numbers);
+
+    // แบ่งตัวเลขที่สุ่มได้เป็นสองกลุ่ม
+    let selectedNumbers = numbers.slice(0, 7).sort((a, b) => a - b);
+    let remainingNumbers = numbers.slice(7).sort((a, b) => a - b); // เรียงลำดับจากน้อยไปมาก
+
+    // สร้างแถวใหม่สำหรับผลลัพธ์
+    const row = document.createElement('tr');
+
+    // เพิ่มลำดับ
+    const seqCell = document.createElement('td');
+    seqCell.textContent = sequence++;
+    row.appendChild(seqCell);
+
+    // เพิ่มตัวเลขสุ่มเรียง
+    selectedNumbers.forEach(num => {
+        const cell = document.createElement('td');
+        cell.className = 'number-cell';
+        cell.textContent = num;
+        row.appendChild(cell);
+    });
+
+    // เว้นช่องว่าง
+    const spacer1 = document.createElement('td');
+    spacer1.className = 'spacer';
+    row.appendChild(spacer1);
+
+    // เพิ่มตัวเลขที่เหลือ (เว้น) ที่เรียงลำดับจากน้อยไปมาก
+    remainingNumbers.forEach(num => {
+        const cell = document.createElement('td');
+        cell.className = 'number-cell';
+        cell.textContent = num;
+        row.appendChild(cell);
+    });
+
+    // เว้นช่องว่าง
+    const spacer2 = document.createElement('td');
+    spacer2.className = 'spacer';
+    row.appendChild(spacer2);
+
+    // เพิ่มช่องสำหรับเลขจริง
+    for (let i = 0; i < 3; i++) {
+        const realNumberCell = document.createElement('input');
+        realNumberCell.className = 'input-cell';
+        realNumberCell.type = 'text';
+        realNumberCell.maxLength = 1;
+
+        realNumberCell.addEventListener('input', function() {
+            const value = parseInt(realNumberCell.value);
+            if (!isNaN(value) && value >= 0 && value <= 9) {
+                numberStatistics[value]++;
+                updateSummary();
+            } else {
+                realNumberCell.value = ''; // เคลียร์ค่าในช่องหากไม่ใช่ตัวเลข
+            }
+        });
+
+        realNumberCell.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                inputCell.focus();
+            }
+        });
+
+        const realNumberTd = document.createElement('td');
+        realNumberTd.appendChild(realNumberCell);
+        row.appendChild(realNumberTd);
+    }
+
+    // เพิ่ม input สำหรับเลขที่ออก
+    const inputCell = document.createElement('input');
+    inputCell.className = 'input-cell';
+    inputCell.type = 'text';
+    inputCell.maxLength = 1;
+
+    inputCell.addEventListener('input', function() {
+        const value = parseInt(inputCell.value);
+        if (!isNaN(value) && value >= 0 && value <= 9) {
+            numberStatistics[value]++;
+            updateSummary();
+        } else {
+            inputCell.value = ''; // เคลียร์ค่าในช่องหากไม่ใช่ตัวเลข
+        }
+    });
+
+    
+
+    inputCell.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        // ลบผลลัพธ์ที่นับไว้ก่อนหน้านี้
+        if (resultCell.textContent === '1') {
+            correctCount--;
+        } else if (resultCell.textContent === '0') {
+            incorrectCount--;
+        }
+
+        const inputValue = parseInt(inputCell.value);
+
+        // หาเลขใน 3 ช่องเว้นท้าย
+        const remainingNumbers = Array.from(row.querySelectorAll('.number-cell')).slice(8, 11);
+        const remainingValues = remainingNumbers.map(cell => parseInt(cell.textContent));
+
+        if (selectedNumbers.includes(inputValue)) {
+            resultCell.textContent = '1';
+            resultCell.className = 'result-cell correct';
+            correctCount++;
+        } else {
+            resultCell.textContent = '0';
+            resultCell.className = 'result-cell incorrect';
+            incorrectCount++;
+        }
+
+        // ตรวจสอบว่าเลขที่กรอกตรงกับเลขในช่องเว้นหรือไม่ และเปลี่ยนเป็นสีแดงจาง ๆ
+        remainingNumbers.forEach((cell, index) => {
+            if (remainingValues[index] === inputValue) {
+                cell.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'; // สีแดงจาง ๆ
+            } else {
+                cell.style.backgroundColor = ''; // ล้างสีพื้นหลังถ้าไม่ตรง
+            }
+        });
+
+        // ตรวจสอบว่าเลขที่กรอกตรงกับเลขในส่วน "สุ่มออก" หรือไม่ และเปลี่ยนเป็นสีเหลืองอ่อนมาก ๆ และทำตัวอักษรเป็นตัวหนา
+        selectedNumbers.forEach((num, index) => {
+            const cell = row.querySelectorAll('.number-cell')[index];
+            if (num === inputValue) {
+                cell.style.backgroundColor = 'rgba(255, 255, 0, 0.3)'; // สีเหลืองอ่อนมาก ๆ
+                cell.style.fontWeight = 'bold'; // ทำตัวอักษรเป็นตัวหนา
+            } else {
+                cell.style.backgroundColor = ''; // ล้างสีพื้นหลังถ้าไม่ตรง
+                cell.style.fontWeight = 'normal'; // ล้างตัวหนาถ้าไม่ตรง
+            }
+        });
+
+        updateSummary();
+
+        // สร้างบรรทัดใหม่
+        generateNumbers();
+
+        // Focus ไปยังช่อง "เลขออก" ในแถวใหม่ที่สร้างขึ้น
+        let newRow = document.querySelector('#results tr:last-child');
+        let newInputCell = newRow.querySelectorAll('.input-cell')[3]; // เลือกช่อง "เลขออก" ของแถวใหม่
+        newInputCell.focus();
+    }
+});
+
+
+
+
+
+
+
+
+
+
+    const inputTd = document.createElement('td');
+    inputTd.appendChild(inputCell);
+    row.appendChild(inputTd);
+
+    // เพิ่มช่องสำหรับแสดงผล
+    const resultCell = document.createElement('td');
+    resultCell.className = 'result-cell';
+    row.appendChild(resultCell);
+
+    // แสดงผลลัพธ์ในตาราง
+    document.getElementById('results').appendChild(row);
+
+    // เลื่อน Slide bar ไปที่แถวสุดท้าย
+    row.scrollIntoView({ behavior: 'smooth' });
+
+    // อัปเดตสถิติทันทีหลังจากสร้างแถวใหม่
+    updateSummary();
+}
+
+
+        function clearNumbers() {
+            // ล้างบรรทัดทั้งหมดและรีเซ็ตลำดับและสรุปผล
+            document.getElementById('results').innerHTML = '';
+            sequence = 1;
+            correctCount = 0;
+            incorrectCount = 0;
+            numberStatistics = Array(10).fill(0);
+            updateSummary();
+        }
+
+        function saveResults() {
+            const now = new Date();
+            const filename = `${now.getDate()}_${now.getMonth() + 1}_${now.getFullYear()}_${now.getHours()}_${now.getMinutes()}.html`;
+            const resultsHtml = document.querySelector('.content').innerHTML + document.querySelector('#sidebar').innerHTML;
+
+            const blob = new Blob([resultsHtml], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+    </script>
+
+</body>
+</html>
